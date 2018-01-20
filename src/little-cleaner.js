@@ -142,53 +142,69 @@ cleaner.options = {
 	],
 	eval: true
 }
+function setAttribute(name,value) {
+	 const cleaned = cleaner(value);
+   if(typeof(cleaned)!=="undefined") {
+     this.__setAttribute__(name,cleaned);
+   }
+}
+cleaner.protect = (el) => {
+	if(typeof(el.value)!=="undefined") {
+		 const get = () => get._value,
+	     set = (value) => {
+	       const cleaned = cleaner(value);
+	       if(typeof(cleaned)!=="undefined") {
+	         get._value = cleaned;
+	       }
+	     };
+	 // save current value;
+	 get.__value = cleaner(el.value);
+   // re-define the value property so data is cleaned
+   Object.defineProperty(el,"value",{enumerable:true,
+                                     configurable:true,
+                                     get,set});
+	}
+//redefine setAttribute so it works with cleaned value
+	if(el.setAttribute!==setAttribute) {
+		Object.defineProperty(el,"__setAttribute__",{enumerbale:false,configurable:true,writable:true,value:el.setAttribute});
+	  el.setAttribute = setAttribute;
+	}
+  for(let child of el.children) {
+  	cleaner.protect(child);
+  }
+  return el;
+}
 
 if(typeof(document)!=="undefined") {
 //on client or a server DOM is operable
   const _documentCreateElement =
         document.createElement.bind(document);
   document.createElement = function(tagName,options) {
-    const el = _documentCreateElement(tagName,options);
-    if(el instanceof HTMLInputElement ||
-       el instanceof HTMLTextAreaElement) {
-      const get = () => get._value,
-        set = (value) => {
-          const cleaned = cleaner(value);
-          if(typeof(cleaned)!=="undefined") {
-            get._value = cleaned;
-          }
-        };
-      // re-define the value property so data is cleaned
-      Object.defineProperty(el,"value",{enumerable:true,
-                                        configurable:true,
-                                        get,set});
-      // redefine setAttribute so it works with re-defined value
-      const _setAttribute = el.setAttribute.bind(el);
-      el.setAttribute = function(name,value) {
-         set(value);
-         if(typeof(get._value)!=="undefined") {
-           _setAttribute(name,get._value);
-         }
-      }
-    }
-    return el;
+    return cleaner.protect(_documentCreateElement(tagName,options));
   }
 }
 
-if(typeof(window)!=="undefined" && window.prompt) {
+if(typeof(window)!=="undefined") {
 // on client or a server pseudo window is available
-	const _prompt = window.prompt.bind(window);
-	window.prompt = function(title) {
-		const input = _prompt(title),
-			cleaned = cleaner(input);
-		if(typeof(cleaned)=="undefined") {
-			window.alert("Invalid input: " + input);
-		} else {
-			return cleaned;
-		} 
+	if(window.prompt) {
+		const _prompt = window.prompt.bind(window);
+		window.prompt = function(title) {
+			const input = _prompt(title),
+				cleaned = cleaner(input);
+			if(typeof(cleaned)=="undefined") {
+				window.alert("Invalid input: " + input);
+			} else {
+				return cleaned;
+			} 
+		}
 	}
+	window.addEventListener("load",() => {
+		cleaner.protect(document.head);
+		cleaner.protect(document.body);
+	});
 }
 
+document.setEvent
 
 if(typeof(module)!=="undefined") module.exports = cleaner;
 if(typeof(window)!=="undefined") window.cleaner = cleaner;

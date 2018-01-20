@@ -33,4 +33,27 @@ describe("cleaner",function() {
 		expect(sanitized.nested.f).to.equal(undefined);
 		expect(sanitized.nested.s).to.equal("test");
 	});
+	it("protect value",function() {
+		const el = document.createElement("input");
+		el.value = "function() { return true; }";
+		expect(el.value==="" || el.value===undefined).to.equal(true);
+		el.value ="Safe Value";
+		expect(el.value).to.equal("Safe Value");
+	});
+	it("setAttribute",function() {
+		const el = document.createElement("div");
+		el.setAttribute("title","function() { return true; }");
+		expect(el.title).to.equal("");
+		el.setAttribute("title","Safe Title");
+		expect(el.title).to.equal("Safe Title");
+	});
+	it("document protected",function() {
+		if(typeof(document)!=="undefined") {
+			const el = document.body;
+			el.setAttribute("function() { return true; }");
+			expect(el.title).to.equal("");
+			el.setAttribute("title","Safe Title");
+			expect(el.title).to.equal("Safe Title");
+		}
+	});
 });
