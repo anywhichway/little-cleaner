@@ -1,6 +1,6 @@
 (function() {
 	"use strict";
-	/* Copyright 2017, AnyWhichWay, Simon Y. Blackwell, MIT License
+	/* Copyright 2017,2018, AnyWhichWay, Simon Y. Blackwell, MIT License
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
 	in the Software without restriction, including without limitation the rights
@@ -62,7 +62,7 @@
 				try {
 					// if data can be converted into something that is legal JavaScript, clean it
 					// make sure that options.reject has already removed undesireable self evaluating or blocking functions
-					// call with null to block global accces
+					// call with null to block global access
 					return cleaner(Function("return " + data).call(null));
 				} catch(error) {
 					// otherwise, just return it
@@ -169,7 +169,7 @@ cleaner.protect = (el) => {
 		Object.defineProperty(el,"__setAttribute__",{enumerbale:false,configurable:true,writable:true,value:el.setAttribute});
 	  el.setAttribute = setAttribute;
 	}
-  for(let child of el.children) {
+  for(let child of [].slice.call(el.children)) {
   	cleaner.protect(child);
   }
   return el;
@@ -203,8 +203,6 @@ if(typeof(window)!=="undefined") {
 		cleaner.protect(document.body);
 	});
 }
-
-document.setEvent
 
 if(typeof(module)!=="undefined") module.exports = cleaner;
 if(typeof(window)!=="undefined") window.cleaner = cleaner;

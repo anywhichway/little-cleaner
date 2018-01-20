@@ -29,9 +29,9 @@ describe("cleaner",function() {
 						s: "test"
 					}
 			},
-			sanitized = cleaner(object);
-		expect(sanitized.nested.f).to.equal(undefined);
-		expect(sanitized.nested.s).to.equal("test");
+			clean = cleaner(object);
+		expect(clean.nested.f).to.equal(undefined);
+		expect(clean.nested.s).to.equal("test");
 	});
 	it("protect value",function() {
 		const el = document.createElement("input");
@@ -47,13 +47,16 @@ describe("cleaner",function() {
 		el.setAttribute("title","Safe Title");
 		expect(el.title).to.equal("Safe Title");
 	});
-	it("document protected",function() {
+	it("document protected",function(done) {
 		if(typeof(document)!=="undefined") {
-			const el = document.body;
-			el.setAttribute("function() { return true; }");
-			expect(el.title).to.equal("");
-			el.setAttribute("title","Safe Title");
-			expect(el.title).to.equal("Safe Title");
+			setTimeout(() => {
+				const el = document.body;
+				el.setAttribute("title","function() { return true; }");
+				expect(el.title).to.equal("");
+				el.setAttribute("title","Safe Title");
+				expect(el.title).to.equal("Safe Title");
+				done();
+			});
 		}
 	});
 });
