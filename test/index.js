@@ -47,6 +47,11 @@ describe("cleaner",function() {
 		el.setAttribute("title","Safe Title");
 		expect(el.title).to.equal("Safe Title");
 	});
+	it("setAttribute onclick",function() {
+		const el = document.createElement("div");
+		el.setAttribute("onclick","function() { return true; }");
+		expect(el.getAttribute("onclick")).to.equal("function() { return true; }");
+	});
 	it("document protected",function(done) {
 		if(typeof(document)!=="undefined") {
 			setTimeout(() => {

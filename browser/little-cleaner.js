@@ -143,7 +143,7 @@ cleaner.options = {
 	eval: true
 }
 function setAttribute(name,value) {
-	 const cleaned = cleaner(value);
+	 const cleaned = (name.indexOf("on")===0 ? value : cleaner(value));
    if(typeof(cleaned)!=="undefined") {
      this.__setAttribute__(name,cleaned);
    }
