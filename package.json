@@ -1,12 +1,11 @@
 {
   "name": "little-cleaner",
-  "version": "v0.0.4",
+  "version": "v1.0.2",
   "description": "A small utility for reducing the chance of XSS and HTML injection",
   "engines": {},
   "license": "MIT",
   "scripts": {
-    "prepare": "cp ./src/*.js ./browser/ && cp ./src/little-cleaner.js index.js && uglifyjs browser/little-cleaner.js -o browser/little-cleaner.min.js"
-  },
+   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/anywhichway/little-cleaner.git"

@@ -108,7 +108,7 @@ cleaner.options = {
 		// arrow function
 		data => typeof(data)==="string" && data.match(/\(\s*.*\s*\)\s*.*\s*=>/),
 		// self eval, might negatively impact cleaner itself
-		data => typeof(data)==="string" && data.match(/[Ff]unction\s*.*\s*\(\s*.*\s*\)\s*.*\s*\{\s*.*\s*\}\s*.*\s*\)\s*.*\s*\(\s*.*\s*\)/),	
+		data => typeof(data)==="string" && data.match(/[Ff]unction\s*.*\s*\(\s*.*\s*\)\s*.*\s*\{\s*.*\s*\}/),
 	],
 	escape: [ 
 		data => { // handle possible query strings
@@ -175,15 +175,6 @@ cleaner.protect = (el) => {
   return el;
 }
 
-if(typeof(document)!=="undefined") {
-//on client or a server DOM is operable
-  const _documentCreateElement =
-        document.createElement.bind(document);
-  document.createElement = function(tagName,options) {
-    return cleaner.protect(_documentCreateElement(tagName,options));
-  }
-}
-
 if(typeof(window)!=="undefined") {
 // on client or a server pseudo window is available
 	if(window.prompt) {
@@ -198,11 +189,21 @@ if(typeof(window)!=="undefined") {
 			} 
 		}
 	}
-	window.addEventListener("load",() => {
+	window.addEventListener("DOMContentLoaded",() => {
+		if(typeof(document)!=="undefined") {
+//on client or a server DOM is operable
+			const _documentCreateElement =
+				document.createElement.bind(document);
+			document.createElement = function(tagName,options) {
+				return cleaner.protect(_documentCreateElement(tagName,options));
+			}
+		}
 		cleaner.protect(document.head);
 		cleaner.protect(document.body);
 	});
 }
+
+
 
 if(typeof(module)!=="undefined") module.exports = cleaner;
 if(typeof(window)!=="undefined") window.cleaner = cleaner;
