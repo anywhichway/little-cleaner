@@ -41,7 +41,7 @@
 		if(options.reject.some(test => test(data))) return;
 	    //remove unsafe data from arrays
 		if(Array.isArray(data)) {
-			data.forEach((item,i) => data[i] = cleaner(data)); 
+			data.forEach((item,i) => data[i] = cleaner(item));
 			return data;
 		}
     //recursively clean data on objects

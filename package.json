@@ -1,6 +1,6 @@
 {
   "name": "little-cleaner",
-  "version": "v1.0.2",
+  "version": "v1.0.3",
   "description": "A small utility for reducing the chance of XSS and HTML injection",
   "engines": {},
   "license": "MIT",
